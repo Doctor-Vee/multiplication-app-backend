@@ -50,11 +50,11 @@ public class MultiplicationService {
 
     private List<Integer> generateWrongAnswers(Integer correctAnswer, int noOfAnswers, int lowerLimit){
         List<Integer> incorrectAnswers = new ArrayList<>();
+        int upperMultiplierBound = noOfAnswers + 16;
         for(int i = 1; i < noOfAnswers; i++){
-            int number1 = rand.nextInt(16) + lowerLimit;
-            int number2 = rand.nextInt(16) + lowerLimit;
-            int numberToAdd = number1 * number2;
-            if(numberToAdd != correctAnswer){
+            int multiplier = rand.nextInt()%upperMultiplierBound;
+            int numberToAdd = correctAnswer + multiplier * 10;
+            if(numberToAdd != correctAnswer && !incorrectAnswers.contains(numberToAdd) && numberToAdd > 0){
                 incorrectAnswers.add(numberToAdd);
             } else {
                 i--;
