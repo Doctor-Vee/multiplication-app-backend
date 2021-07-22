@@ -13,7 +13,7 @@ public class MultiplicationController {
     MultiplicationService multiplicationService;
 
     @GetMapping("")
-    public ResponseEntity<Response> displayTotalActivity(
+    public ResponseEntity<Response> generateMultiplicationQuestions(
             @RequestParam(required = false, defaultValue = "easy") String difficulty,
             @RequestParam(required = false, defaultValue = "10") Integer noOfQuestions,
             @RequestParam(required = false, defaultValue = "4") Integer noOfAnswers) throws Exception {
