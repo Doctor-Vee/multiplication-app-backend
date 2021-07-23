@@ -17,7 +17,7 @@ public class MultiplicationController {
     MultiplicationService multiplicationService;
 
     @GetMapping("")
-    @ApiOperation(value = "Generate multiplication Questions",
+    @ApiOperation(value = "Generate multiplication questions",
             notes = "Supply the parameters as you want or leave them blank and it will use default values")
     public ResponseEntity<Response> generateMultiplicationQuestions(
             @RequestParam(required = false, defaultValue = "easy") String difficulty,
