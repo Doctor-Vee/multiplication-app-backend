@@ -1,7 +1,14 @@
 package com.doctorvee.multiplicationapp;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -62,4 +69,75 @@ public class MultiplicationService {
         }
         return incorrectAnswers;
     }
+
+    public void downloadQuestions(HttpServletResponse servletResponse, String difficulty, Integer noOfQuestions, Integer noOfAnswers) {
+
+        String fileName = "multiplicationQuestions.xls";
+
+        try{
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("multiplicationQuestions");
+            int rowCount = 0;
+            int cellCount = 0;
+
+            Response response = generateQuestions(difficulty, noOfQuestions, noOfAnswers);
+
+            HSSFRow titleRow = sheet.createRow((short) rowCount);
+            titleRow.setHeightInPoints((short) 20);
+            titleRow.createCell(cellCount++).setCellValue("No.");
+            titleRow.createCell(cellCount++).setCellValue("Question");
+            titleRow.createCell(cellCount++).setCellValue("Incorrect Answers");
+            titleRow.createCell(cellCount++).setCellValue("Correct Answer");
+            titleRow.createCell(cellCount).setCellValue("Difficulty");
+
+            for (QuestionDetail detail: response.getResults()){
+                rowCount++;
+                cellCount = 0;
+                HSSFRow row = sheet.createRow((short) rowCount);
+                row.createCell(cellCount++).setCellValue(rowCount);
+                row.createCell(cellCount++).setCellValue(detail.getQuestion());
+                row.createCell(cellCount++).setCellValue(detail.getIncorrectAnswers().toString());
+                row.createCell(cellCount++).setCellValue(detail.getCorrectAnswer());
+                row.createCell(cellCount).setCellValue(detail.getDifficulty());
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+            System.out.println("The excel file has been generated!");
+            processExcelSheetDownload(fileName, servletResponse);
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+    private void processExcelSheetDownload(String fileName, HttpServletResponse response){
+        try{
+            File fileToDownload = new File(fileName);
+            InputStream in = new FileInputStream(fileToDownload);
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.setContentLength((int) fileToDownload.length());
+            String headerValue = String.format("attachment; filename=\"%s\"", fileToDownload.getName());
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, headerValue);
+
+            OutputStream outputStream = response.getOutputStream();
+
+            byte[] buffer = new byte[4096];
+
+            int bytesRead;
+
+            while ((bytesRead = in.read(buffer)) != -1){
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            in.close();
+            outputStream.close();
+            System.out.println("File downloaded at client successfully");
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
 }
