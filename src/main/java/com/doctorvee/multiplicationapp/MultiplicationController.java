@@ -3,21 +3,22 @@ package com.doctorvee.multiplicationapp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
 @RequestMapping("/multiplication/questions")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 @Api(tags = {"Multiplication Controller Endpoint"})
 public class MultiplicationController {
 
-    @Autowired
-    MultiplicationService multiplicationService;
+
+    private final HttpResponseBuilder httpResponseBuilder;
+    private final MultiplicationService multiplicationService;
 
     @GetMapping("")
     @ApiOperation(value = "Generate multiplication questions",
@@ -33,14 +34,15 @@ public class MultiplicationController {
 
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ApiOperation(value = "Download multiplication questions")
-    public void downloadQuestions(
-            HttpServletResponse servletResponse,
-            @RequestParam(required = false, defaultValue = "easy") String difficulty,
+    public ResponseEntity<Resource> downloadQuestionsUsingFastExcel(
             @RequestParam(required = false, defaultValue = "10") Integer noOfQuestions,
             @ApiParam(value = "The total number of options to be returned")
             @RequestParam(required = false, defaultValue = "4") Integer noOfAnswers) {
 
-        multiplicationService.downloadQuestions(servletResponse, difficulty, noOfQuestions, noOfAnswers);
+        DownloadableResource resource = multiplicationService.downloadQuestions(noOfQuestions, noOfAnswers);
+
+        return httpResponseBuilder.fromDownloadableResource(resource);
 
     }
+
 }
