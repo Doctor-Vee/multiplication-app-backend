@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2
+      author: Doctor Vee
+      comment: Seed data into the question and incorrect answer tables
+      changes:
+        - tagDatabase:
+            tag: v2
+        - sqlFile:
+            dbms: mysql,mariadb
+            path: v2.sql
+            relativeToChangelogFile: true

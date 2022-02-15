@@ -1,5 +1,12 @@
-package com.doctorvee.multiplicationapp;
+package com.doctorvee.multiplicationapp.service;
 
+import com.doctorvee.multiplicationapp.dto.DownloadableResource;
+import com.doctorvee.multiplicationapp.dto.QuestionDTO;
+import com.doctorvee.multiplicationapp.dto.Response;
+import com.doctorvee.multiplicationapp.entity.Question;
+import com.doctorvee.multiplicationapp.repository.QuestionRepository;
+import com.doctorvee.multiplicationapp.util.Converter;
+import lombok.RequiredArgsConstructor;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Service;
@@ -10,7 +17,12 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class MultiplicationService {
+
+    private final QuestionRepository questionRepository;
+    private final Converter converter;
+
     Random rand = new Random();
 
     public Response generateQuestions(String difficulty, int noOfQuestions, int noOfAnswers) throws Exception {
@@ -35,19 +47,27 @@ public class MultiplicationService {
                 throw new Exception("Invalid difficulty set");
         }
         Response response = new Response();
-        List<QuestionDetail> questionDetailList = new ArrayList<>();
+        List<QuestionDTO> questionDetailList = new ArrayList<>();
         for (int i = 0; i < noOfQuestions; i++) {
-            QuestionDetail questionDetail = new QuestionDetail();
+            QuestionDTO questionDTO = new QuestionDTO();
             int number1 = rand.nextInt(16) + lowerLimit;
             int number2 = rand.nextInt(16) + lowerLimit;
-            questionDetail.setQuestion(number1 + " x " + number2);
+            questionDTO.setQuestion(number1 + " x " + number2);
             int correctAnswer = number1 * number2;
-            questionDetail.setCorrectAnswer(correctAnswer);
-            questionDetail.setDifficulty(difficulty);
-            questionDetail.setIncorrectAnswers(generateWrongAnswers(correctAnswer, noOfAnswers, lowerLimit));
-            questionDetailList.add(questionDetail);
+            questionDTO.setCorrectAnswer(correctAnswer);
+            questionDTO.setDifficulty(difficulty);
+            questionDTO.setIncorrectAnswers(generateWrongAnswers(correctAnswer, noOfAnswers, lowerLimit));
+            questionDetailList.add(questionDTO);
+            questionRepository.save(new Question(questionDTO));
         }
         response.setResults(questionDetailList);
+        return response;
+    }
+
+    public Response getQuestionsFromDatabase() {
+        Response response = new Response();
+        response.setResults(questionRepository.findAll().stream().map(converter::convertQuestionToDTO)
+                .collect(java.util.stream.Collectors.toList()));
         return response;
     }
 
@@ -83,7 +103,7 @@ public class MultiplicationService {
                 ws.value(rowCount, cellCount++, "Correct Answer");
                 ws.value(rowCount, cellCount, "Difficulty");
 
-                for (QuestionDetail detail : response.getResults()) {
+                for (QuestionDTO detail : response.getResults()) {
                     rowCount++;
                     cellCount = 0;
                     ws.value(rowCount, cellCount++, rowCount);

@@ -1,0 +1,15 @@
+# From https://hub.docker.com/_/mari3adb/
+version: '3.1'
+
+services:
+
+  db:
+    image: mariadb:10.5.8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: multiplication_app
+    ports:
+      - 33333:3306
+    volumes:
+      - ./mariadb/my.cnf:/etc/mysql/my.cnf

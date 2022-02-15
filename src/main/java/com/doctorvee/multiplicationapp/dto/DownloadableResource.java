@@ -1,4 +1,4 @@
-package com.doctorvee.multiplicationapp;
+package com.doctorvee.multiplicationapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

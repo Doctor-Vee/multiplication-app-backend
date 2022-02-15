@@ -1,0 +1,5 @@
+liquibase:
+  enabled: true
+  url: jdbc:mariadb://localhost:33333/multiplication_app
+  username: root
+  password: admin

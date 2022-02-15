@@ -1,14 +1,15 @@
-package com.doctorvee.multiplicationapp;
+package com.doctorvee.multiplicationapp.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ApiModel(description = "The necessary fields to be returned in the question object")
-public class QuestionDetail {
+public class QuestionDTO {
 
     @ApiModelProperty(notes = "The question itself")
     private String question;
@@ -20,6 +21,6 @@ public class QuestionDetail {
     private Integer correctAnswer;
 
     @ApiModelProperty(notes = "Other options different from the correct answer")
-    private List<Integer> incorrectAnswers;
+    private List<Integer> incorrectAnswers = new ArrayList<>();
 
 }

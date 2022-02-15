@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: v0
+      author: Doctor Vee
+      comment: Initial Migration
+      changes:
+        - tagDatabase:
+            tag: v0
+            tagComment: Initial version
+            tagDate: '12-02-2022'
+            tagType: INITIAL

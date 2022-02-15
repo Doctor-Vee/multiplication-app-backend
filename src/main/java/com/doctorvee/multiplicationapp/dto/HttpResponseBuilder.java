@@ -1,4 +1,4 @@
-package com.doctorvee.multiplicationapp;
+package com.doctorvee.multiplicationapp.dto;
 
 
 import org.springframework.core.io.ByteArrayResource;
