@@ -1,6 +1,6 @@
 create table incorrect_answer
 (
-    id          bigint not null,
+    id          bigint not null auto_increment,
     answer      varchar(255),
     question_id bigint not null,
     primary key (id)
@@ -9,7 +9,7 @@ create table incorrect_answer
 
 create table question
 (
-    id             bigint not null,
+    id             bigint not null auto_increment,
     correct_answer integer,
     difficulty     varchar(255),
     question       varchar(255),

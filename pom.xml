@@ -60,6 +60,15 @@
             <artifactId>liquibase-maven-plugin</artifactId>
             <version>${liquibase-maven.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.reloadly</groupId>
+            <artifactId>reloadly-pdf-gen</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

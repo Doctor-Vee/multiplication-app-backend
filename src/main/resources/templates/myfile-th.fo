@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8059-1"?>
+
+<fo:root font-family="Helvetica" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4"
+        page-width="210mm" page-height="297mm" margin="15mm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="A4" th:each="batchNo : ${batches}">
+    <fo:flow flow-name="xsl-region-body">
+        <fo:block font-weight="bold" font-style="italic"  font-size="24pt" th:text="${difficulties[batchNo]}"/>
+
+        <fo:block th:each="result: ${questions[batchNo].results}">
+        <fo:block font-size="15pt" th:text="${result.question}" />
+
+        <fo:block th:each="incorrectAnswer: ${result.incorrectAnswers}">
+        <fo:block font-size="12pt" th:text="${incorrectAnswer}" />
+        </fo:block>
+        <fo:block font-weight="bold" font-style="italic" font-size="12pt" th:text="${result.correctAnswer}" />
+        <fo:block font-size="15pt" th:text="--------------------" />
+        </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+
+

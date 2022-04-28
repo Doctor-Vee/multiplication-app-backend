@@ -57,4 +57,17 @@ public class MultiplicationController {
 
     }
 
+    @GetMapping(value = "/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ApiOperation(value = "Download multiplication questions")
+    public ResponseEntity<Resource> downloadQuestionsUsingPdf(
+            @RequestParam(required = false, defaultValue = "10") Integer noOfQuestions,
+            @ApiParam(value = "The total number of options to be returned")
+            @RequestParam(required = false, defaultValue = "4") Integer noOfAnswers) {
+
+        DownloadableResource resource = multiplicationService.downloadQuestionsPDF(noOfQuestions, noOfAnswers);
+
+        return httpResponseBuilder.fromDownloadableResource(resource);
+
+    }
+
 }

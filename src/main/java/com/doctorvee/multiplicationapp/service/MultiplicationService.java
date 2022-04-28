@@ -6,15 +6,15 @@ import com.doctorvee.multiplicationapp.dto.Response;
 import com.doctorvee.multiplicationapp.entity.Question;
 import com.doctorvee.multiplicationapp.repository.QuestionRepository;
 import com.doctorvee.multiplicationapp.util.Converter;
+import com.reloadly.pdf.service.PdfGenerator;
 import lombok.RequiredArgsConstructor;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,7 @@ public class MultiplicationService {
 
     private final QuestionRepository questionRepository;
     private final Converter converter;
+    private final PdfGenerator pdfGenerator;
 
     Random rand = new Random();
 
@@ -118,5 +119,29 @@ public class MultiplicationService {
             ex.printStackTrace();
         }
         return new DownloadableResource("multiplicationQuestions.xlsx", outputStream.toByteArray());
+    }
+
+    public DownloadableResource downloadQuestionsPDF(Integer noOfQuestions, Integer noOfAnswers) {
+        List<String> difficulties = List.of("easy", "medium", "hard", "medium", "easy");
+        Map<String, Object> modelMap = new HashMap<>();
+        byte[] pdf = new byte[0];
+        List<Response> responseList = new ArrayList<>();
+        List<String> difficultyList = new ArrayList<>();
+        try {
+            for (String difficulty : difficulties) {
+                Response response = generateQuestions(difficulty, noOfQuestions, noOfAnswers);
+                responseList.add(response);
+                difficultyList.add(difficulty.toUpperCase());
+            }
+            modelMap.put("difficulties", difficultyList);
+            modelMap.put("questions", responseList);
+            int[] batches = IntStream.range(0, difficulties.size()).toArray();
+            System.out.println(Arrays.toString(batches));
+            modelMap.put("batches", batches);
+            pdf = pdfGenerator.generatePdf(modelMap, "myfile-th.fo");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new DownloadableResource("multiplicationQuestions.pdf", pdf);
     }
 }
